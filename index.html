@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bafo Master 🖐️ - O Jogo de Figurinha Retrô</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div style="padding: 20px; box-sizing: border-box; width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    
+    <!-- 1. TELA DE MENU (LOBBY DE ENTRADA) -->
+    <div id="screen-menu" class="game-card">
+      <h1 class="logo-title">BAFO <span>MASTER</span></h1>
+      
+      <div class="record-box">
+        <span style="font-size: 2.2rem;">🏆</span>
+        <div>
+          <div style="font-size: 0.75rem; font-weight: 900; color: #666; letter-spacing: 0.5px;">MAIOR RECORDE (CAMPANHA)</div>
+          <div id="display-high-score" style="font-family: 'Anton', sans-serif; font-size: 1.6rem; color: var(--accent-gold); letter-spacing: 0.5px;">0 FIGURINHAS</div>
+        </div>
+      </div>
+
+      <div class="profile-preview-card">
+        <div class="hand-display-container">
+          <svg id="svg-menu-hand" viewBox="0 0 100 100" class="hand-illustration">
+            <path class="hand-base-skin" d="M35 85 C28 85, 20 80, 20 70 C20 60, 25 50, 32 40 C32 40, 28 35, 28 30 C28 20, 38 18, 42 28 C45 18, 55 16, 58 28 C61 18, 71 20, 72 32 C73 22, 82 25, 80 38 C79 50, 75 62, 70 70 C65 78, 55 85, 45 85 Z" fill="#fcd34d" stroke="#111111" stroke-width="3"/>
+            <rect id="glove-cuff" x="32" y="76" width="28" height="10" rx="3" fill="#111111"/>
+          </svg>
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <h3 id="display-hand-level" style="font-family: 'Anton', sans-serif; font-size: 2rem; margin: 0 0 5px 0; letter-spacing: 0.5px;">Nível da Mão: 1</h3>
+          <p style="font-weight: 900; margin: 0 0 12px 0; font-size: 1rem;">Luva Equipada: <span id="display-equipped-glove" class="glove-badge">Mão Limpa</span></p>
+          <div class="xp-bar-container">
+            <div id="xp-fill" class="xp-bar-fill"></div>
+            <span id="xp-text" class="xp-text-overlay">XP: 0 / 100</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 25px;">
+        <label style="font-weight: 900; font-size: 0.95rem; display: block; margin-bottom: 12px; letter-spacing: 0.5px;">UPGRADES E SKINS DE LUVAS:</label>
+        <div class="glove-shop-grid">
+          <button type="button" class="glove-btn active" data-glove="normal">
+            <span>🖐️ Mão Limpa</span>
+            <span class="glove-badge-store badge-bonus">Padrão</span>
+          </button>
+          <button type="button" class="glove-btn locked" data-glove="la" id="btn-glove-la">
+            <span>🧤 Luva de Lã</span>
+            <span class="glove-badge-store badge-level">Nível 3</span>
+            <span style="font-size: 0.65rem; font-weight: bold; margin-top: 3px; color: #555;">Velocidade -15%</span>
+          </button>
+          <button type="button" class="glove-btn locked" data-glove="couro" id="btn-glove-couro">
+            <span>🥊 Luva Couro</span>
+            <span class="glove-badge-store badge-level">Nível 5</span>
+            <span style="font-size: 0.65rem; font-weight: bold; margin-top: 3px; color: #555;">Zona Verde +25%</span>
+          </button>
+          <button type="button" class="glove-btn locked" data-glove="gamer" id="btn-glove-gamer">
+            <span>🎮 Luva Gamer</span>
+            <span class="glove-badge-store badge-level">Nível 10</span>
+            <span style="font-size: 0.65rem; font-weight: bold; margin-top: 3px; color: #555;">Super Calibrada</span>
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-mode mode-online" id="btn-mode-online">⚡ JOGAR ONLINE</button>
+      <button type="button" class="btn-mode mode-bot" id="btn-mode-bot">🤖 JOGAR CONTRA BOT</button>
+      <button type="button" class="btn-mode mode-practice" id="btn-mode-practice">🎯 SALA DE TREINO</button>
+    </div>
+
+    <!-- 2. TELA DO JOGO (ARENA) -->
+    <div id="screen-game" class="game-card hidden">
+      
+      <!-- Matchmaking Overlay (Shown during Online Mode search) -->
+      <div id="matchmaking-screen" class="matchmaking-overlay hidden">
+        <h2 class="logo-title" style="font-size: 3rem;">MATCH<span>MAKING</span></h2>
+        <div class="matchmaking-loader"></div>
+        <p style="font-weight: 900; font-size: 1.1rem; margin-bottom: 25px;" id="matchmaking-status">Procurando oponente na rede...</p>
+        
+        <div class="versus-container">
+          <div class="vs-card">
+            <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
+              <path class="hand-base-skin user-hand-color" d="M35 85 C28 85, 20 80, 20 70 C20 60, 25 50, 32 40 C32 40, 28 35, 28 30 C28 20, 38 18, 42 28 C45 18, 55 16, 58 28 C61 18, 71 20, 72 32 C73 22, 82 25, 80 38 C79 50, 75 62, 70 70 C65 78, 55 85, 45 85 Z" fill="#fcd34d" stroke="#111111" stroke-width="3"/>
+            </svg>
+            <div style="font-weight: 900; font-size: 0.8rem; margin-top: 5px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%;">Você</div>
+            <div style="font-size: 0.7rem; font-weight: bold; color: #666;" id="matchmaking-player-lvl">Lvl 1</div>
+          </div>
+          
+          <div class="vs-badge">VS</div>
+          
+          <div class="vs-card">
+            <div id="matchmaking-opponent-avatar" style="font-size: 2.2rem; height: 50px; display: flex; align-items: center; justify-content: center;">🔍</div>
+            <div style="font-weight: 900; font-size: 0.8rem; margin-top: 5px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%;" id="matchmaking-opponent-name">? ? ?</div>
+            <div style="font-size: 0.7rem; font-weight: bold; color: #666;" id="matchmaking-opponent-lvl">Lvl -</div>
+          </div>
+        </div>
+        
+        <button type="button" id="btn-cancel-matchmaking" style="background: white; border: 3px solid #111; padding: 10px 20px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 3px 3px 0px #111;">Cancelar Busca</button>
+      </div>
+
+      <!-- Game Over Overlay Modal -->
+      <div id="game-over-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <div id="modal-result-title" class="modal-title win">VITÓRIA!</div>
+          <p id="modal-result-msg" style="font-weight: bold; margin-bottom: 20px; font-size: 1.05rem;">Você superou o oponente no bafo!</p>
+          
+          <div class="modal-stats">
+            <div class="modal-stat-row">
+              <span>Minhas figurinhas:</span>
+              <span id="modal-stat-player-score" style="font-weight: 900; color: var(--success-green);">0</span>
+            </div>
+            <div class="modal-stat-row" id="modal-stat-opponent-row">
+              <span>Figurinhas do oponente:</span>
+              <span id="modal-stat-opponent-score" style="font-weight: 900; color: var(--fail-red);">0</span>
+            </div>
+            <div class="modal-stat-row">
+              <span>XP Ganho:</span>
+              <span id="modal-stat-xp" style="font-weight: 900; color: var(--accent-gold);">+0 XP</span>
+            </div>
+            <div class="modal-stat-row" id="modal-stat-level-up-row" style="display: none; border-top: 1.5px dashed var(--retro-dark); padding-top: 8px; margin-top: 8px; justify-content: center; color: var(--accent-gold); font-size: 1.1rem;">
+              <span>🎉 SUBIU PARA O NÍVEL <strong id="modal-new-level">2</strong>!</span>
+            </div>
+          </div>
+          
+          <button type="button" id="btn-modal-close" class="modal-btn">VOLTAR AO MENU</button>
+        </div>
+      </div>
+
+      <!-- Duel Header (Scoreboard) -->
+      <div class="duel-header" id="game-scoreboard">
+        <!-- Player Info -->
+        <div class="duel-player-info">
+          <div class="duel-player-name" id="display-player-name">VOCÊ</div>
+          <div class="duel-player-score" id="display-flipped-count">0</div>
+        </div>
+        
+        <!-- Status / Turn Display -->
+        <div id="game-turn-badge" class="turn-status-badge player-turn">SEU TURNO</div>
+        
+        <!-- Opponent Info -->
+        <div class="duel-player-info" id="opponent-scoreboard-box">
+          <div class="duel-player-name" id="display-opponent-name">BOT</div>
+          <div class="duel-player-score opponent-score-color" id="display-opponent-flipped-count">0</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <button type="button" id="btn-back-to-menu" style="background: white; border: 2.5px solid #111; padding: 5px 15px; border-radius: 8px; font-weight: 900; cursor: pointer; box-shadow: 2px 2px 0px #111; transition: all 0.05s;">◀ Menu</button>
+        <div id="game-mode-tag" class="glove-badge">SALA DE TREINO</div>
+        <div style="font-weight: 900; font-size: 0.9rem; color: #444;" id="game-cards-left">Figurinhas no Monte: 1</div>
+      </div>
+
+      <div id="practice-warning" style="background: #fcf8e3; border: 2.5px solid #faebcc; color: #8a6d3b; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 0.85rem; font-weight: bold; box-shadow: 2px 2px 0px #faebcc;">
+        ⚠️ Modo Treino ativo: Sem ganho de XP, Nível ou Recordes!
+      </div>
+
+      <div class="battlefield-canvas" id="canvas-area">
+        <!-- Chat Speech Bubbles Container -->
+        <div class="chat-bubbles-container" id="chat-container">
+          <!-- Bubbles will be injected dynamically here -->
+        </div>
+
+        <div class="stack-container">
+          <div class="card-pile" id="stack-pile-3d">
+            <!-- Main active card on top -->
+            <div class="collectible-card" id="main-collectible-card">
+              <div class="card-face card-front">
+                <div style="font-size: 0.8rem; font-weight: 900; letter-spacing: 0.5px;">BAFO MASTER</div>
+                <div style="font-size: 2.2rem; transform: rotate(-5deg);" id="card-emoji-illustration">🌟</div>
+                <div id="card-rarity-tag" style="font-size: 0.7rem; color: var(--accent-gold); font-weight: 900; border: 1.5px solid var(--retro-dark); padding: 1px 5px; border-radius: 3px; background: white;">COMUM</div>
+              </div>
+              <div class="card-face card-back">
+                <div class="card-back-pattern"></div>
+              </div>
+            </div>
+            <!-- Extra background visual layers to represent depth in stack -->
+            <div class="card-layer shadow-layer1" id="pile-layer-1"></div>
+            <div class="card-layer shadow-layer2" id="pile-layer-2"></div>
+          </div>
+          <div id="pow-particles" class="pow-text">POW!</div>
+        </div>
+
+        <!-- Slapping hand striker -->
+        <div id="interactive-game-hand" class="game-hand-striker">
+          <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+            <path id="slapping-hand-svg" class="hand-base-skin" d="M35 85 C28 85, 20 80, 20 70 C20 60, 25 50, 32 40 C32 40, 28 35, 28 30 C28 20, 38 18, 42 28 C45 18, 55 16, 58 28 C61 18, 71 20, 72 32 C73 22, 82 25, 80 38 C79 50, 75 62, 70 70 C65 78, 55 85, 45 85 Z" fill="#fcd34d" stroke="#111111" stroke-width="3"/>
+            <rect id="game-glove-cuff" x="32" y="76" width="28" height="10" rx="3" fill="#111111"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="precision-bar-outer" id="precision-bar">
+        <div class="precision-success-zone" id="green-zone"></div>
+        <div class="precision-cursor" id="bar-cursor"></div>
+      </div>
+
+      <button type="button" class="btn-slap-action" id="btn-slap-trigger">BATER FIGURINHA! <span style="font-size: 0.8rem; display: block; font-weight: normal; margin-top: 3px; font-family: 'Outfit', sans-serif;">(Ou Pressione Espaço)</span></button>
+      
+      <!-- Emoji Reaction Panel (Visible only in vs BOT or Online Modes) -->
+      <div id="reaction-panel-box" class="reaction-panel hidden">
+        <button type="button" class="reaction-btn" data-reaction="😂">😂</button>
+        <button type="button" class="reaction-btn" data-reaction="🏆">🏆</button>
+        <button type="button" class="reaction-btn" data-reaction="🖐️">🖐️</button>
+        <button type="button" class="reaction-btn" data-reaction="😱">😱</button>
+        <button type="button" class="reaction-btn" data-reaction="🔥">🔥</button>
+        <button type="button" class="reaction-btn" data-reaction="💩">💩</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,728 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;700;900&display=swap');
+
+:root {
+  --retro-cream: #f4efe2;
+  --retro-dark: #111111;
+  --success-green: #2ecc71;
+  --fail-red: #e74c3c;
+  --accent-gold: #c29b38;
+  --retro-blue: #012169;
+  --light-white: #ffffff;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--retro-cream) !important;
+  color: var(--retro-dark);
+  overflow-x: hidden;
+}
+
+.hidden { display: none !important; }
+
+/* Logo Title with retro style */
+.logo-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 3.8rem;
+  letter-spacing: 3px;
+  color: var(--fail-red) !important;
+  text-shadow: 3px 3px 0px var(--accent-gold), 6px 6px 0px var(--retro-dark);
+  text-align: center;
+  margin: 0 0 10px 0;
+}
+
+.logo-title span {
+  color: var(--retro-blue) !important;
+  text-shadow: 2px 2px 0px var(--accent-gold);
+}
+
+.game-card {
+  background: var(--light-white);
+  border: 4px solid var(--retro-dark);
+  box-shadow: 10px 10px 0px var(--retro-dark);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 680px;
+  margin: 20px auto;
+  padding: 25px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.record-box {
+  background: var(--retro-cream);
+  border: 3px solid var(--retro-dark);
+  border-radius: 10px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  box-shadow: 4px 4px 0px var(--retro-dark);
+}
+
+.profile-preview-card {
+  display: flex;
+  background: var(--retro-cream);
+  border: 3px solid var(--retro-dark);
+  box-shadow: 4px 4px 0px var(--retro-dark);
+  border-radius: 12px;
+  padding: 20px;
+  gap: 25px;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.hand-display-container {
+  background: white;
+  border: 2.5px solid var(--retro-dark);
+  border-radius: 10px;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 0px var(--retro-dark);
+}
+
+.hand-illustration {
+  width: 90px;
+  height: 90px;
+}
+
+.xp-bar-container {
+  background: #e0d9c5;
+  border: 2px solid var(--retro-dark);
+  height: 20px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  background: var(--success-green);
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.xp-text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--retro-dark);
+  text-shadow: 1px 1px 0px white;
+}
+
+.glove-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+.glove-btn {
+  background: white;
+  border: 2.5px solid var(--retro-dark);
+  box-shadow: 3px 3px 0px var(--retro-dark);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.1s ease;
+}
+
+.glove-btn:hover:not(.locked) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--retro-dark);
+}
+
+.glove-btn:active:not(.locked) {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px var(--retro-dark);
+}
+
+.glove-btn.active {
+  background-color: var(--accent-gold) !important;
+}
+
+.glove-btn.locked {
+  background: #eaeaea;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.glove-badge {
+  background: var(--retro-blue);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  border: 1.5px solid var(--retro-dark);
+  display: inline-block;
+}
+
+.btn-mode {
+  width: 100%;
+  background: white;
+  border: 3.5px solid var(--retro-dark);
+  border-radius: 12px;
+  box-shadow: 6px 6px 0px var(--retro-dark);
+  padding: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+  margin-bottom: 15px;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn-mode:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--retro-dark); }
+.btn-mode:active { transform: translate(2px, 2px); box-shadow: 4px 4px 0px var(--retro-dark); }
+.mode-online { border-color: var(--retro-blue); box-shadow: 6px 6px 0px var(--retro-blue); color: var(--retro-blue); }
+.mode-online:hover { box-shadow: 8px 8px 0px var(--retro-blue); }
+.mode-bot { border-color: var(--accent-gold); box-shadow: 6px 6px 0px var(--accent-gold); color: var(--accent-gold); }
+.mode-bot:hover { box-shadow: 8px 8px 0px var(--accent-gold); }
+.mode-practice { border-color: var(--success-green); box-shadow: 6px 6px 0px var(--success-green); color: var(--success-green); }
+.mode-practice:hover { box-shadow: 8px 8px 0px var(--success-green); }
+
+/* Battlefield/Arena styling */
+.battlefield-canvas {
+  background-color: #27ae60;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 15%, transparent 20%), radial-gradient(rgba(255, 255, 255, 0.15) 15%, transparent 20%);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  border: 3.5px solid var(--retro-dark);
+  border-radius: 12px;
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: inset 0px 0px 20px rgba(0,0,0,0.3);
+}
+
+.stack-container {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  perspective: 600px;
+}
+
+.card-pile {
+  position: relative;
+  width: 95px;
+  height: 130px;
+  transform-style: preserve-3d;
+}
+
+.collectible-card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  border: 2.5px solid var(--retro-dark);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  box-shadow: 0px 4px 6px rgba(0,0,0,0.15);
+}
+
+.card-front {
+  background: var(--retro-cream);
+  color: var(--retro-dark);
+}
+
+.card-back {
+  background: #cf4a30;
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-back-pattern {
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  border: 2px dashed rgba(255,255,255,0.4);
+  border-radius: 4px;
+  background: repeating-linear-gradient(
+    45deg,
+    #cf4a30,
+    #cf4a30 10px,
+    #b33c24 10px,
+    #b33c24 20px
+  );
+}
+
+.card-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  border: 2.5px solid var(--retro-dark);
+  background: #ddd;
+  box-sizing: border-box;
+}
+
+.shadow-layer1 { transform: translate(3px, 3px) translateZ(-5px); z-index: 4; }
+.shadow-layer2 { transform: translate(6px, 6px) translateZ(-10px); z-index: 3; }
+
+.game-hand-striker {
+  position: absolute;
+  bottom: -90px;
+  left: 45%;
+  width: 90px;
+  height: 90px;
+  z-index: 15;
+  pointer-events: none;
+  transition: left 0.15s ease-out;
+}
+
+.game-hand-striker.slap-animation {
+  animation: hitSlap 0.3s ease-out forwards;
+}
+
+@keyframes hitSlap {
+  0% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-130px) scale(1.15) rotate(-15deg); }
+  50% { transform: translateY(-110px) scale(0.9) rotate(5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+.precision-bar-outer {
+  background: var(--fail-red);
+  border: 3.5px solid var(--retro-dark);
+  height: 28px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 3px 3px 0px var(--retro-dark);
+  margin-bottom: 20px;
+}
+
+.precision-success-zone {
+  background: var(--success-green);
+  height: 100%;
+  width: 12%;
+  position: absolute;
+  left: 44%;
+}
+
+.precision-cursor {
+  background: white;
+  border: 2.5px solid var(--retro-dark);
+  width: 12px;
+  height: 100%;
+  position: absolute;
+  left: 0%;
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 0 4px rgba(0,0,0,0.5);
+}
+
+.btn-slap-action {
+  width: 100%;
+  background-color: var(--fail-red) !important;
+  color: white !important;
+  border: 3.5px solid var(--retro-dark) !important;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.6rem;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 5px 5px 0px var(--retro-dark);
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+
+.btn-slap-action:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0px var(--retro-dark);
+}
+
+.btn-slap-action:active {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0px var(--retro-dark);
+}
+
+.pow-text {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  font-family: 'Anton', sans-serif;
+  font-size: 1.8rem;
+  color: #fcd34d;
+  background: var(--fail-red);
+  padding: 4px 14px;
+  border: 3.5px solid var(--retro-dark);
+  border-radius: 8px;
+  z-index: 30;
+  box-shadow: 4px 4px 0px var(--retro-dark);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pow-text.trigger { transform: translateX(-50%) scale(1.1) rotate(-8deg); }
+
+/* Game Duel Header (Scores and turn info) */
+.duel-header {
+  display: flex;
+  justify-content: space-between;
+  background: var(--retro-cream);
+  border: 3px solid var(--retro-dark);
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  box-shadow: 4px 4px 0px var(--retro-dark);
+}
+
+.duel-player-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 110px;
+}
+
+.duel-player-name {
+  font-weight: 900;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.duel-player-score {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.8rem;
+  color: var(--retro-blue);
+}
+
+.opponent-score-color {
+  color: var(--fail-red) !important;
+}
+
+.turn-status-badge {
+  background: var(--retro-dark);
+  color: white;
+  padding: 8px 16px;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.turn-status-badge.player-turn {
+  background: var(--success-green);
+  color: var(--retro-dark);
+  border: 2px solid var(--retro-dark);
+}
+
+.turn-status-badge.opponent-turn {
+  background: var(--fail-red);
+  color: white;
+  border: 2px solid var(--retro-dark);
+}
+
+/* Matchmaking Screen Overlay */
+.matchmaking-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--retro-cream);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.matchmaking-loader {
+  width: 60px;
+  height: 60px;
+  border: 6px solid var(--retro-dark);
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 30px;
+  box-shadow: 4px 4px 0px var(--retro-dark);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.versus-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.vs-card {
+  background: white;
+  border: 3px solid var(--retro-dark);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 4px 4px 0px var(--retro-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+  text-align: center;
+}
+
+.vs-avatar {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.vs-badge {
+  font-family: 'Anton', sans-serif;
+  font-size: 2.2rem;
+  color: var(--fail-red);
+  text-shadow: 2px 2px 0px var(--accent-gold);
+}
+
+/* Chat bubble styling for simulated multiplayer reaction */
+.chat-bubbles-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.speech-bubble {
+  position: absolute;
+  background: white;
+  border: 2.5px solid var(--retro-dark);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 1.4rem;
+  box-shadow: 3px 3px 0px var(--retro-dark);
+  font-weight: bold;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.bubble-player {
+  left: 20px;
+  bottom: 80px;
+}
+
+.bubble-opponent {
+  right: 20px;
+  top: 50px;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.reaction-panel {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  background: white;
+  border: 3px solid var(--retro-dark);
+  border-radius: 10px;
+  padding: 8px;
+  box-shadow: 3px 3px 0px var(--retro-dark);
+}
+
+.reaction-btn {
+  font-size: 1.3rem;
+  background: var(--retro-cream);
+  border: 2px solid var(--retro-dark);
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.05s;
+}
+
+.reaction-btn:hover {
+  transform: scale(1.15) rotate(5deg);
+  background: white;
+}
+
+.reaction-btn:active {
+  transform: scale(0.9);
+}
+
+/* Match Over Screen Modal */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17,17,17,0.85);
+  border-radius: 12px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background: var(--retro-cream);
+  border: 4px solid var(--retro-dark);
+  border-radius: 16px;
+  box-shadow: 8px 8px 0px var(--retro-dark);
+  max-width: 400px;
+  width: 100%;
+  padding: 25px;
+  text-align: center;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.modal-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 2.5rem;
+  letter-spacing: 1.5px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 0px var(--accent-gold);
+}
+
+.modal-title.win {
+  color: var(--success-green);
+}
+
+.modal-title.lose {
+  color: var(--fail-red);
+}
+
+.modal-stats {
+  background: white;
+  border: 3px solid var(--retro-dark);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 3px 3px 0px var(--retro-dark);
+}
+
+.modal-stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.modal-stat-row:last-child {
+  margin-bottom: 0;
+}
+
+.modal-btn {
+  background: var(--retro-blue);
+  color: white;
+  border: 3px solid var(--retro-dark);
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--retro-dark);
+  width: 100%;
+  letter-spacing: 1px;
+}
+
+.modal-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px var(--retro-dark);
+}
+
+.modal-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0px var(--retro-dark);
+}
+
+/* Card Stack Animation / Shake effects */
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(0px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(2px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(2px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.shake-animation {
+  animation: shake 0.25s linear;
+}
+
+/* Hand selector in updates */
+.glove-badge-store {
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--retro-dark);
+  margin-top: 4px;
+  display: block;
+}
+
+.badge-bonus {
+  background: var(--success-green);
+  color: var(--retro-dark);
+}
+
+.badge-level {
+  background: var(--accent-gold);
+  color: white;
+}
