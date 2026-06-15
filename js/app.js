@@ -126,6 +126,24 @@ function playSound(type) {
       osc.start(now);
       osc.stop(now + 0.75);
     }
+    else if (type === "triple") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(500, now);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+    else if (type === "click") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    }
   } catch (e) {
     console.error("Erro ao gerar áudio nativo:", e);
   }
@@ -147,6 +165,7 @@ let state = {
   isPlayerTurn: true,      // indica se é a vez do jogador
   opponentName: "BOT",
   opponentLevel: 1,
+  slapStyle: "classic",
   
   // Matchmaking
   matchmakingTimeout: null,
@@ -277,10 +296,15 @@ function updateUI() {
   if (menuHandBase) menuHandBase.setAttribute("fill", activeColor.base);
   if (menuHandCuff) menuHandCuff.setAttribute("fill", activeColor.cuff);
 
-  const gameHandBase = document.querySelector("#slapping-hand-svg");
-  const gameHandCuff = document.querySelector("#game-glove-cuff");
-  if (gameHandBase) gameHandBase.setAttribute("fill", activeColor.base);
-  if (gameHandCuff) gameHandCuff.setAttribute("fill", activeColor.cuff);
+  const gameHandLeftBase = document.querySelector("#slapping-hand-left-svg");
+  const gameHandLeftCuff = document.querySelector("#game-glove-left-cuff");
+  if (gameHandLeftBase) gameHandLeftBase.setAttribute("fill", activeColor.base);
+  if (gameHandLeftCuff) gameHandLeftCuff.setAttribute("fill", activeColor.cuff);
+
+  const gameHandRightBase = document.querySelector("#slapping-hand-right-svg");
+  const gameHandRightCuff = document.querySelector("#game-glove-right-cuff");
+  if (gameHandRightBase) gameHandRightBase.setAttribute("fill", activeColor.base);
+  if (gameHandRightCuff) gameHandRightCuff.setAttribute("fill", activeColor.cuff);
   
   // Atualizar cores da mão do usuário na tela de matchmaking
   const matchUserHand = document.querySelector(".user-hand-color");
@@ -316,6 +340,15 @@ function configurePrecisionBar() {
   const glove = GLOVE_DETAILS[state.equippedGlove] || GLOVE_DETAILS.normal;
   baseSpeed *= glove.speedMod;
   greenWidth += glove.zoneMod;
+
+  // Integre a modificação de dificuldade do golpe duplo
+  if (state.slapStyle === "double") {
+    baseSpeed *= 1.8;
+    greenWidth *= 0.45;
+    document.getElementById("precision-success-label").innerText = "ZONA VERDE ULTRA MINÚSCULA 👐";
+  } else {
+    document.getElementById("precision-success-label").innerText = "ZONA VERDE (SUCESSO!) 🖐️";
+  }
 
   precisionState.speed = baseSpeed;
   precisionState.greenMin = 50 - (greenWidth / 2);
@@ -364,9 +397,16 @@ function triggerSlap() {
   stopPrecisionBar();
   playSound("slap");
 
-  // Animar a mão batendo
-  const gameHand = document.getElementById("interactive-game-hand");
-  gameHand.classList.add("slap-animation");
+  // Animar os strikers correspondentes
+  const gameHandLeft = document.getElementById("interactive-game-hand-left");
+  const gameHandRight = document.getElementById("interactive-game-hand-right");
+
+  if (state.slapStyle === "double") {
+    if (gameHandLeft) gameHandLeft.classList.add("slap-animation");
+    if (gameHandRight) gameHandRight.classList.add("slap-animation");
+  } else {
+    if (gameHandLeft) gameHandLeft.classList.add("slap-animation");
+  }
 
   // Obter o resultado com base no cursor
   const current = precisionState.cursorPos;
@@ -379,11 +419,21 @@ function triggerSlap() {
     const cardPile = document.getElementById("stack-pile-3d");
 
     if (isSuccess) {
-      playSound("success");
-      
+      let cardsFlipped = 1;
+      if (state.slapStyle === "double") {
+        cardsFlipped = Math.random() < 0.75 ? 3 : 2;
+        if (cardsFlipped === 3) playSound("triple");
+        else playSound("success");
+      } else {
+        playSound("success");
+      }
+
+      // Limitar a quantidade de viradas ao monte restante
+      const actualFlipped = Math.min(state.cardsInStack, cardsFlipped);
+
       // Atualizar placar do jogador e monte
-      state.currentScore += 1;
-      state.cardsInStack -= 1;
+      state.currentScore += actualFlipped;
+      state.cardsInStack -= actualFlipped;
       
       document.getElementById("display-flipped-count").innerText = state.currentScore;
       document.getElementById("game-cards-left").innerText = `Figurinhas no Monte: ${state.cardsInStack}`;
@@ -393,13 +443,20 @@ function triggerSlap() {
       mainCard.style.transform = `rotateY(180deg) translateZ(30px) rotate(${randomRotate}deg) scale(1.05)`;
 
       // Partículas / Feedback de texto
-      const feedWords = ["SENSACIONAL! +1", "QUE BAFO! +1", "VIRTOU! 🖐️", "INCRÍVEL! +1"];
-      powText.innerText = feedWords[Math.floor(Math.random() * feedWords.length)];
+      if (actualFlipped === 3) {
+        const layer1 = document.getElementById("layer-card-1");
+        const layer2 = document.getElementById("layer-card-2");
+        if (layer1) layer1.style.opacity = "0";
+        if (layer2) layer2.style.opacity = "0";
+        powText.innerText = "VENTO DE DUAS MÃOS! +3 👐💥";
+      } else {
+        powText.innerText = `SENSACIONAL! +${actualFlipped} 🖐️`;
+      }
       powText.className = "pow-text trigger";
 
       // Conceder XP se não for modo treino
       if (state.activeMode !== "practice") {
-        addXP(20);
+        addXP(actualFlipped * 20);
         // Atualizar recorde máximo se for modo competitivo
         if (state.currentScore > state.highScore) {
           state.highScore = state.currentScore;
@@ -410,17 +467,16 @@ function triggerSlap() {
       playSound("fail");
       
       // Pilha treme para indicar vento fraco
-      cardPile.classList.add("shake-animation");
+      if (cardPile) cardPile.classList.add("shake-animation");
       
       // Feedback de erro
-      const errorWords = ["ERROU! ❌", "SOPROU! 💨", "FRACO! 💨", "QUASE! 😅"];
-      powText.innerText = errorWords[Math.floor(Math.random() * errorWords.length)];
+      powText.innerText = "SÓ SAIU AR! ❌";
       powText.className = "pow-text trigger";
       
       mainCard.style.transform = "translateY(-5px) rotate(2deg)";
       setTimeout(() => { 
         mainCard.style.transform = "rotate(0deg)";
-        cardPile.classList.remove("shake-animation");
+        if (cardPile) cardPile.classList.remove("shake-animation");
       }, 250);
     }
 
@@ -430,9 +486,15 @@ function triggerSlap() {
 
   // Limpeza da animação e transição de turnos (850ms)
   setTimeout(() => {
-    gameHand.classList.remove("slap-animation");
+    if (gameHandLeft) gameHandLeft.classList.remove("slap-animation");
+    if (gameHandRight) gameHandRight.classList.remove("slap-animation");
     document.getElementById("pow-particles").classList.remove("trigger");
     document.getElementById("main-collectible-card").style.transform = "rotateY(0deg)";
+    
+    const layer1 = document.getElementById("layer-card-1");
+    const layer2 = document.getElementById("layer-card-2");
+    if (layer1) layer1.style.opacity = "1";
+    if (layer2) layer2.style.opacity = "1";
     
     state.isSlapping = false;
 
@@ -458,26 +520,47 @@ function triggerSlap() {
 function opponentTurnExecution() {
   if (state.cardsInStack <= 0) return;
 
-  // Posicionar a mão no lado esquerdo da mesa para bater de forma oposta
-  const gameHand = document.getElementById("interactive-game-hand");
-  gameHand.style.left = "15%"; // Lado esquerdo
+  const gameHandLeft = document.getElementById("interactive-game-hand-left");
+  const gameHandRight = document.getElementById("interactive-game-hand-right");
+
+  // Simular se o oponente vai usar golpe duplo
+  const opponentSlapStyle = state.activeMode === "online" && Math.random() < 0.4 ? "double" : "classic";
+
+  // Mover strikers correspondentes para o lado esquerdo
+  if (opponentSlapStyle === "double") {
+    if (gameHandLeft) gameHandLeft.style.left = "10%";
+    if (gameHandRight) {
+      gameHandRight.style.left = "22%";
+      gameHandRight.style.display = "block";
+      gameHandRight.classList.remove("hidden");
+    }
+  } else {
+    if (gameHandLeft) gameHandLeft.style.left = "15%";
+    if (gameHandRight) {
+      gameHandRight.style.display = "none";
+      gameHandRight.classList.add("hidden");
+    }
+  }
 
   // Simulação de delay para bater
   setTimeout(() => {
     playSound("slap");
-    gameHand.classList.add("slap-animation");
+    if (opponentSlapStyle === "double") {
+      if (gameHandLeft) gameHandLeft.classList.add("slap-animation");
+      if (gameHandRight) gameHandRight.classList.add("slap-animation");
+    } else {
+      if (gameHandLeft) gameHandLeft.classList.add("slap-animation");
+    }
 
     // Determinar sucesso da IA
     let successChance = 0.45; // Chance base do BOT
     
     if (state.activeMode === "bot") {
-      // BOT fica mais inteligente à medida que o jogador avança de nível
       successChance = 0.38 + (state.handLevel * 0.02);
-      successChance = Math.min(successChance, 0.75); // Teto de 75%
+      successChance = Math.min(successChance, 0.75);
     } else if (state.activeMode === "online") {
-      // Oponente online tem precisão baseada no seu nível sorteado
       successChance = 0.42 + (state.opponentLevel * 0.025);
-      successChance = Math.min(successChance, 0.80); // Teto de 80%
+      successChance = Math.min(successChance, 0.80);
     }
 
     const isSuccess = Math.random() < successChance;
@@ -489,9 +572,18 @@ function opponentTurnExecution() {
       const cardPile = document.getElementById("stack-pile-3d");
 
       if (isSuccess) {
-        playSound("success");
-        state.opponentScore += 1;
-        state.cardsInStack -= 1;
+        let cardsFlipped = 1;
+        if (opponentSlapStyle === "double") {
+          cardsFlipped = Math.random() < 0.75 ? 3 : 2;
+          if (cardsFlipped === 3) playSound("triple");
+          else playSound("success");
+        } else {
+          playSound("success");
+        }
+
+        const actualFlipped = Math.min(state.cardsInStack, cardsFlipped);
+        state.opponentScore += actualFlipped;
+        state.cardsInStack -= actualFlipped;
 
         document.getElementById("display-opponent-flipped-count").innerText = state.opponentScore;
         document.getElementById("game-cards-left").innerText = `Figurinhas no Monte: ${state.cardsInStack}`;
@@ -499,22 +591,30 @@ function opponentTurnExecution() {
         const randomRotate = Math.floor(Math.random() * 30) - 15;
         mainCard.style.transform = `rotateY(-180deg) translateZ(30px) rotate(${randomRotate}deg) scale(1.05)`;
 
-        powText.innerText = `${state.opponentName} VIRTOU! 🎯`;
+        if (actualFlipped === 3) {
+          const layer1 = document.getElementById("layer-card-1");
+          const layer2 = document.getElementById("layer-card-2");
+          if (layer1) layer1.style.opacity = "0";
+          if (layer2) layer2.style.opacity = "0";
+          powText.innerText = `${state.opponentName} USOU VENTO! +3 👐💥`;
+        } else {
+          powText.innerText = `${state.opponentName} VIRTOU! +${actualFlipped} 🎯`;
+        }
         powText.className = "pow-text trigger";
       } else {
         playSound("fail");
-        cardPile.classList.add("shake-animation");
+        if (cardPile) cardPile.classList.add("shake-animation");
         powText.innerText = `${state.opponentName} ERROU! 💨`;
         powText.className = "pow-text trigger";
         
         mainCard.style.transform = "translateY(-5px) rotate(-2deg)";
         setTimeout(() => { 
           mainCard.style.transform = "rotate(0deg)";
-          cardPile.classList.remove("shake-animation");
+          if (cardPile) cardPile.classList.remove("shake-animation");
         }, 250);
       }
 
-      // Reações de chat simuladas do oponente online após jogadas marcantes
+      // Reações de chat simuladas do oponente online
       if (state.activeMode === "online" && Math.random() < 0.5) {
         setTimeout(() => {
           const reaction = isSuccess ? ["🏆", "🔥", "😂"][Math.floor(Math.random() * 3)] : ["😱", "💩", "🖐️"][Math.floor(Math.random() * 3)];
@@ -527,12 +627,31 @@ function opponentTurnExecution() {
 
     // Finalização do tapa do oponente e retorno do turno
     setTimeout(() => {
-      gameHand.classList.remove("slap-animation");
+      if (gameHandLeft) gameHandLeft.classList.remove("slap-animation");
+      if (gameHandRight) gameHandRight.classList.remove("slap-animation");
       document.getElementById("pow-particles").classList.remove("trigger");
       document.getElementById("main-collectible-card").style.transform = "rotateY(0deg)";
       
-      // Reposicionar a mão de volta ao lado do jogador
-      gameHand.style.left = "45%";
+      const layer1 = document.getElementById("layer-card-1");
+      const layer2 = document.getElementById("layer-card-2");
+      if (layer1) layer1.style.opacity = "1";
+      if (layer2) layer2.style.opacity = "1";
+      
+      // Reposicionar a mão de volta ao lado do jogador conforme seu estilo ativo
+      if (state.slapStyle === "double") {
+        if (gameHandLeft) gameHandLeft.style.left = "36%";
+        if (gameHandRight) {
+          gameHandRight.style.left = "54%";
+          gameHandRight.style.display = "block";
+          gameHandRight.classList.remove("hidden");
+        }
+      } else {
+        if (gameHandLeft) gameHandLeft.style.left = "45%";
+        if (gameHandRight) {
+          gameHandRight.style.display = "none";
+          gameHandRight.classList.add("hidden");
+        }
+      }
 
       if (state.cardsInStack <= 0) {
         endMatch();
@@ -549,8 +668,8 @@ function opponentTurnExecution() {
 
 // Atualiza a arte/pilha 3D com base nas cartas restantes
 function updateCardPileGraphics() {
-  const layer1 = document.getElementById("pile-layer-1");
-  const layer2 = document.getElementById("pile-layer-2");
+  const layer1 = document.getElementById("layer-card-1");
+  const layer2 = document.getElementById("layer-card-2");
   const mainCard = document.getElementById("main-collectible-card");
 
   if (state.cardsInStack <= 0) {
@@ -631,6 +750,9 @@ function startNewGame(mode) {
   state.cardsInStack = 10;
   state.isPlayerTurn = true;
   state.isSlapping = false;
+  
+  // Resetar estilo de batida para o padrão
+  setSlapStyle("classic");
 
   // Fechar quaisquer modais anteriores
   document.getElementById("game-over-modal").classList.add("hidden");
@@ -859,6 +981,37 @@ function equipGlove(gloveKey) {
   updateUI();
 }
 
+// --- ALTERAÇÃO DE ESTILO DE BATIDA ---
+function setSlapStyle(style) {
+  state.slapStyle = style;
+  playSound("click");
+  const btnClassic = document.getElementById("style-btn-classic");
+  const btnDouble = document.getElementById("style-btn-double");
+
+  const gameHandLeft = document.getElementById("interactive-game-hand-left");
+  const gameHandRight = document.getElementById("interactive-game-hand-right");
+
+  if (style === "double") {
+    if (btnDouble) btnDouble.classList.add("active");
+    if (btnClassic) btnClassic.classList.remove("active");
+    if (gameHandLeft) gameHandLeft.style.left = "36%";
+    if (gameHandRight) {
+      gameHandRight.style.left = "54%";
+      gameHandRight.style.display = "block";
+      gameHandRight.classList.remove("hidden");
+    }
+  } else {
+    if (btnClassic) btnClassic.classList.add("active");
+    if (btnDouble) btnDouble.classList.remove("active");
+    if (gameHandLeft) gameHandLeft.style.left = "45%";
+    if (gameHandRight) {
+      gameHandRight.style.display = "none";
+      gameHandRight.classList.add("hidden");
+    }
+  }
+  configurePrecisionBar();
+}
+
 // --- INICIALIZAÇÃO E EVENT LISTENERS ---
 document.addEventListener("DOMContentLoaded", () => {
   // Botões de modos de jogo
@@ -873,6 +1026,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Ação de bater
   document.getElementById("btn-slap-trigger").addEventListener("click", triggerSlap);
+
+  // Seletores de estilo de batida
+  document.getElementById("style-btn-classic").addEventListener("click", () => setSlapStyle("classic"));
+  document.getElementById("style-btn-double").addEventListener("click", () => setSlapStyle("double"));
 
   // Clique rápido para equipar luvas na loja
   document.querySelectorAll(".glove-btn").forEach(btn => {

@@ -155,6 +155,19 @@
         ⚠️ Modo Treino ativo: Sem ganho de XP, Nível ou Recordes!
       </div>
 
+      <!-- Seletor do Estilo de Batida -->
+      <div class="slap-style-selector-container">
+        <span class="selector-label">ESTILO DO TAPÃO:</span>
+        <div class="style-toggle-group">
+          <button type="button" class="style-toggle-btn active" id="style-btn-classic" data-style="classic">
+            <span class="toggle-icon">🖐️</span> Tapão Normal <span>(1 fig / Fácil)</span>
+          </button>
+          <button type="button" class="style-toggle-btn" id="style-btn-double" data-style="double">
+            <span class="toggle-icon">👐</span> Vento / Duas Mãos <span>(Até 3 fig / Difícil)</span>
+          </button>
+        </div>
+      </div>
+
       <div class="battlefield-canvas" id="canvas-area">
         <!-- Chat Speech Bubbles Container -->
         <div class="chat-bubbles-container" id="chat-container">
@@ -175,21 +188,29 @@
               </div>
             </div>
             <!-- Extra background visual layers to represent depth in stack -->
-            <div class="card-layer shadow-layer1" id="pile-layer-1"></div>
-            <div class="card-layer shadow-layer2" id="pile-layer-2"></div>
+            <div class="card-layer shadow-layer1" id="layer-card-1"></div>
+            <div class="card-layer shadow-layer2" id="layer-card-2"></div>
           </div>
           <div id="pow-particles" class="pow-text">POW!</div>
         </div>
 
-        <!-- Slapping hand striker -->
-        <div id="interactive-game-hand" class="game-hand-striker">
-          <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
-            <path id="slapping-hand-svg" class="hand-base-skin" d="M35 85 C28 85, 20 80, 20 70 C20 60, 25 50, 32 40 C32 40, 28 35, 28 30 C28 20, 38 18, 42 28 C45 18, 55 16, 58 28 C61 18, 71 20, 72 32 C73 22, 82 25, 80 38 C79 50, 75 62, 70 70 C65 78, 55 85, 45 85 Z" fill="#fcd34d" stroke="#111111" stroke-width="3"/>
-            <rect id="game-glove-cuff" x="32" y="76" width="28" height="10" rx="3" fill="#111111"/>
+        <!-- Duas Mãos Strikers -->
+        <div id="interactive-game-hand-left" class="game-hand-striker left-striker">
+          <svg viewBox="0 0 100 100" class="hand-illustration">
+            <path id="slapping-hand-left-svg" class="hand-base-skin" d="M35 85 C28 85, 20 80, 20 70 C20 60, 25 50, 32 40 C32 40, 28 35, 28 30 C28 20, 38 18, 42 28 C45 18, 55 16, 58 28 C61 18, 71 20, 72 32 C73 22, 82 25, 80 38 C79 50, 75 62, 70 70 C65 78, 55 85, 45 85 Z" fill="#fcd34d" stroke="#111111" stroke-width="3"/>
+            <rect id="game-glove-left-cuff" x="32" y="76" width="28" height="10" rx="3" fill="#111111"/>
+          </svg>
+        </div>
+
+        <div id="interactive-game-hand-right" class="game-hand-striker right-striker hidden" style="display: none;">
+          <svg viewBox="0 0 100 100" class="hand-illustration flipped-hand">
+            <path id="slapping-hand-right-svg" class="hand-base-skin" d="M35 85 C28 85, 20 80, 20 70 C20 60, 25 50, 32 40 C32 40, 28 35, 28 30 C28 20, 38 18, 42 28 C45 18, 55 16, 58 28 C61 18, 71 20, 72 32 C73 22, 82 25, 80 38 C79 50, 75 62, 70 70 C65 78, 55 85, 45 85 Z" fill="#fcd34d" stroke="#111111" stroke-width="3"/>
+            <rect id="game-glove-right-cuff" x="32" y="76" width="28" height="10" rx="3" fill="#111111"/>
           </svg>
         </div>
       </div>
 
+      <div id="precision-success-label" style="font-size: 0.85rem; font-weight: 900; text-align: center; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">ZONA VERDE (SUCESSO!) 🖐️</div>
       <div class="precision-bar-outer" id="precision-bar">
         <div class="precision-success-zone" id="green-zone"></div>
         <div class="precision-cursor" id="bar-cursor"></div>
